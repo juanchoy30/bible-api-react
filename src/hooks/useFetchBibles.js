@@ -1,35 +1,44 @@
 import { useEffect, useState } from "react";
+import { apiURL } from "../helpers/apiURL";
 import { getData } from "../helpers/getData";
 
-export const useFetchBibles = ( url ) => {
+export const useFetchBibles = ( url, bibleId, bookId, chapterId ) => {
 
-    const apiURL = `${ url }/v1/bibles`;
+    const finalURL = apiURL(url, bibleId, bookId, chapterId);
+    console.log(finalURL)
     
     const [state, setState] = useState({ data:[], loading: true, error: null });
 
     useEffect(() => {
 
-        getData( apiURL )
+        getData( finalURL )
             .then( data => {
 
-                const bibles = data.map( bible => {
-                    return {
-                        id: bible.id,
-                        title: bible.name,
-                        localName: bible.nameLocal,
-                        abbreviation: bible.abbreviation,
-                        description: bible.description,
-                        localDescription: bible.descriptionLocal,
-                        language: bible.language.name,
-                        languageLocal: bible.language.nameLocal
-                    }
-                });
+                const bibleData = ( !bibleId ) 
+                ? (
+                    data.map( bible => {
+                        return {
+                            id: bible.id,
+                            title: bible.name,
+                            localName: bible.nameLocal,
+                            abbreviation: bible.abbreviation,
+                            description: bible.description,
+                            localDescription: bible.descriptionLocal,
+                            language: bible.language.name,
+                            languageLocal: bible.language.nameLocal
+                        }
+                    })
+                )
+                : (
+                    data
+                )
 
                 setState({
-                    data: bibles,
+                    data: bibleData,
                     loading: false,
                     error: null
                 });
+
             })
             .catch( () => {
                 setState({
@@ -39,7 +48,7 @@ export const useFetchBibles = ( url ) => {
                 });
             })
 
-    }, [apiURL]);
+    }, [finalURL, bibleId]);
 
     return state;
 
