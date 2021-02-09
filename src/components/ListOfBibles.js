@@ -9,15 +9,22 @@ export const ListOfBibles = () => {
 
     return (
         <div>
-            <h3>List of Bibles</h3>
+            <h2>List of Bibles</h2>
             <hr />
 
             { loading && <p>Loading</p>}
             
             <ul>
                 {
-                    data.map( bibles => (
-                        <h4> { bibles.title } </h4>
+                    data.map( bible => (
+                        <li
+                            key={ bible.id }
+                        >
+                            <h3><small>({ bible.abbreviation })</small> | { bible.localName }</h3>
+                            <p>{ bible.title }</p>
+                            <p>{ bible.description }</p>
+                            <p>{ bible.language } / { bible.languageLocal }</p>
+                        </li>
                     ))
                 }
             </ul>

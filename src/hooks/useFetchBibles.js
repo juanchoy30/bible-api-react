@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { apiURL } from "../helpers/apiURL";
+import { dataMannager } from "../helpers/dataMannager";
 import { getData } from "../helpers/getData";
 
 export const useFetchBibles = ( url, bibleId, bookId, chapterId ) => {
 
     const finalURL = apiURL(url, bibleId, bookId, chapterId);
-    console.log(finalURL)
     
     const [state, setState] = useState({ data:[], loading: true, error: null });
 
@@ -14,25 +14,7 @@ export const useFetchBibles = ( url, bibleId, bookId, chapterId ) => {
         getData( finalURL )
             .then( data => {
 
-                const bibleData = ( !bibleId ) 
-                ? (
-                    data.map( bible => {
-                        return {
-                            id: bible.id,
-                            title: bible.name,
-                            localName: bible.nameLocal,
-                            abbreviation: bible.abbreviation,
-                            description: bible.description,
-                            localDescription: bible.descriptionLocal,
-                            language: bible.language.name,
-                            languageLocal: bible.language.nameLocal
-                        }
-                    })
-                )
-                : (
-                    data
-                )
-
+                const bibleData = dataMannager( data, bibleId, chapterId );
                 setState({
                     data: bibleData,
                     loading: false,
@@ -48,7 +30,7 @@ export const useFetchBibles = ( url, bibleId, bookId, chapterId ) => {
                 });
             })
 
-    }, [finalURL, bibleId]);
+    }, [finalURL, bibleId, chapterId]);
 
     return state;
 
